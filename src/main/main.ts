@@ -230,7 +230,7 @@ function setupIPC(): void {
   });
 
   ipcMain.handle('pet-stats:load', () => {
-    return store.getPetStats();
+    try { return store.getPetStats(); } catch (e) { console.error('[pet-stats:load]', e); return {}; }
   });
 }
 
