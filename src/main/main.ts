@@ -30,7 +30,7 @@ function createMainWindow(): BrowserWindow {
   });
 
   const htmlPath = path.join(__dirname, '..', '..', 'renderer', 'pet.html');
-  try { console.log('Loading pet.html from:', htmlPath); } catch (_) {}
+//   try { console.log('Loading pet.html from:', htmlPath); } catch (_) {}
   mainWindow.loadFile(htmlPath);
 
   // Open DevTools in debug
@@ -43,13 +43,13 @@ function createMainWindow(): BrowserWindow {
   });
 
   mainWindow.webContents.on('did-finish-load', () => {
-  try { console.log('pet.html loaded successfully'); } catch (_) {}
+//   try { console.log('pet.html loaded successfully'); } catch (_) {}
   });
 
   mainWindow.webContents.on('console-message', (_event, level, message) => {
     try {
       const prefix = ["LOG", "WARN", "ERROR"][level] || "LOG";
-      try { console.log(`[Renderer ${prefix}] ${message}`); } catch (_) {}
+//       try { console.log(`[Renderer ${prefix}] ${message}`); } catch (_) {}
     } catch (_) { /* ignore broken pipe */ }
   });
   return mainWindow;
@@ -220,11 +220,11 @@ function setupIPC(): void {
 
   // Pet stats persistence
   ipcMain.on('pet-stats:save', (_event, data: { hunger: number; mood: number; energy: number; lastSaveTime: number }) => {
-    try { store.setPetStats(data.hunger, data.mood, data.energy, data.lastSaveTime); } catch (e) { console.error('[pet-stats:save]', e); }
+//     try { store.setPetStats(data.hunger, data.mood, data.energy, data.lastSaveTime); } catch (e) { console.error('[pet-stats:save]', e); }
   });
 
   ipcMain.handle('pet-stats:load', () => {
-    try { return store.getPetStats(); } catch (e) { console.error('[pet-stats:load]', e); return {}; }
+//     try { return store.getPetStats(); } catch (e) { console.error('[pet-stats:load]', e); return {}; }
   });
 }
 

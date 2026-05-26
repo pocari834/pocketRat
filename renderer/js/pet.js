@@ -182,7 +182,7 @@ document.addEventListener('mousemove', (e) => {
 var ctxMenu = document.getElementById("ctx-menu");
 document.addEventListener("contextmenu", function(e) {
   e.preventDefault();
-  if (ctxMenu.style) { ctxMenu.style.display = "block"; ctxMenu.style.left = e.clientX + "px"; ctxMenu.style.top = e.clientY + "px"; }
+  if (ctxMenu && ctxMenu.style) { ctxMenu.style.display = "block"; ctxMenu.style.left = e.clientX + "px"; ctxMenu.style.top = e.clientY + "px"; }
 });
 document.addEventListener("click", function() {
   if (ctxMenu.style) ctxMenu.style.display = "none";
@@ -190,7 +190,7 @@ document.addEventListener("click", function() {
 
 // Menu item clicks
 if (ctxMenu) ctxMenu.addEventListener('click', function(e) {
-  var action = e.target.getAttribute('data-action');
+  var item = e.target.closest('.ctx-item'); if (!item) return; var action = item.getAttribute('data-action');
   ctxMenu.style.display = 'none';
   if (action === 'home') { ipcRenderer.send('pet:enter-home'); }
   else if (action === 'feed') { ipcRenderer.send('pet:feed'); }

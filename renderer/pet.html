@@ -9,7 +9,7 @@
     html, body {
       width: 200px;
       height: 200px;
-      overflow: hidden;
+      overflow: visible;
       background: transparent;
       user-select: none;
       -webkit-app-region: no-drag;
@@ -81,7 +81,7 @@
       height: 6px;
       background: #E0E0E0;
       border-radius: 3px;
-      overflow: hidden;
+      overflow: visible;
     }
     .stat-bar-fill {
       height: 100%;
@@ -95,6 +95,7 @@
 
     /* Custom context menu */
     #ctx-menu {
+      position: fixed;
       position: absolute;
       display: none;
       background: white;
