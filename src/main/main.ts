@@ -220,11 +220,11 @@ function setupIPC(): void {
 
   // Pet stats persistence
   ipcMain.on('pet-stats:save', (_event, data: { hunger: number; mood: number; energy: number; lastSaveTime: number }) => {
-//     try { store.setPetStats(data.hunger, data.mood, data.energy, data.lastSaveTime); } catch (e) { console.error('[pet-stats:save]', e); }
+    try { store.setPetStats(data.hunger, data.mood, data.energy, data.lastSaveTime); } catch (_) {}
   });
 
   ipcMain.handle('pet-stats:load', () => {
-//     try { return store.getPetStats(); } catch (e) { console.error('[pet-stats:load]', e); return {}; }
+    try { return store.getPetStats(); } catch (_) { return {}; }
   });
 }
 
