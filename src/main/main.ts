@@ -238,11 +238,6 @@ app.whenReady().then(() => {
   store = new AppStore();
 
   // Save pet stats before quit
-  app.on('before-quit', () => {
-    if (mainWindow) {
-      mainWindow.webContents.send('pet-stats:save-before-quit');
-    }
-  });
   createMainWindow();
   createTray();
   setupIPC();

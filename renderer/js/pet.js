@@ -222,10 +222,11 @@ function dismissReminderIfNeeded() {
 }
 
 
-// ---- Save stats before quit ----
-ipcRenderer.on('pet-stats:save-before-quit', () => {
+// ---- Save stats on close ----
+window.addEventListener('beforeunload', () => {
   petStats.save();
 });
+
 // ---- Start ----
 loadConfig().then(() => {
   workModeManager.startMonitoring();
