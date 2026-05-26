@@ -144,18 +144,6 @@ function createTray(): void {
 // IPC handlers
 function setupIPC(): void {
   // Pet right-click context menu
-  ipcMain.on('pet:right-click', () => {
-    try {
-      const petMenu = Menu.buildFromTemplate([
-        { label: '鼠宝的家', click: () => createHomeWindow() },
-        { label: '喂食', click: () => mainWindow?.webContents.send('pet:feed') },
-        { label: '追光标', click: () => mainWindow?.webContents.send('game:start', 'chase_cursor') },
-        { type: 'separator' },
-        { label: '设置', click: () => createSettingsWindow() },
-      ]);
-      if (mainWindow) { mainWindow.focus(); petMenu.popup({ window: mainWindow }); }
-    } catch (e) { /* ignore */ }
-  });
 
   ipcMain.on('pet:toggle-penetrate', (_event, enabled: boolean) => {
     if (mainWindow) {
@@ -215,6 +203,8 @@ function setupIPC(): void {
   ipcMain.on('tray:notify', (_event, title: string, body: string) => {
     tray?.displayBalloon({ title, content: body });
   });
+
+  ipcMain.on('settings:open', () => createSettingsWindow());
 
   ipcMain.on('pet:always-on-top', (_event, enabled: boolean) => {
     mainWindow?.setAlwaysOnTop(enabled);

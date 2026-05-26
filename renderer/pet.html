@@ -92,6 +92,33 @@
     .stat-bar-fill.mood   { background: #E91E63; }
     .stat-bar-fill.energy { background: #2196F3; }
     .stat-val { width: 22px; text-align: right; color: #666; font-size: 9px; }
+
+    /* Custom context menu */
+    #ctx-menu {
+      position: absolute;
+      display: none;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      padding: 4px 0;
+      z-index: 100;
+      min-width: 120px;
+      font-size: 12px;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    #ctx-menu .ctx-item {
+      padding: 6px 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #ctx-menu .ctx-item:hover {
+      background: #F0F0F0;
+    }
+    #ctx-menu .ctx-sep {
+      height: 1px;
+      background: #E0E0E0;
+      margin: 4px 0;
+    }
   </style>
 </head>
 <body>
@@ -110,5 +137,12 @@
   <script src="./js/mini-games.js"></script>
   <script src="./js/pet-stats.js"></script>
   <script src="./js/pet.js"></script>
-</body>
+
+<div id="ctx-menu">
+  <div class="ctx-item" data-action="home">🐹 鼠宝的家</div>
+  <div class="ctx-item" data-action="feed">🧀 喂食</div>
+  <div class="ctx-item" data-action="game">🎾 追光标</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" data-action="settings">⚙️ 设置</div>
+</div></body>
 </html>

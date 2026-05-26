@@ -178,13 +178,27 @@ document.addEventListener('mousemove', (e) => {
 
 
 
-// ---- Right-click context menu (fallback) ----
-document.addEventListener('contextmenu', (e) => {
+// ---- Custom right-click menu ----
+var ctxMenu = document.getElementById("ctx-menu");
+document.addEventListener("contextmenu", function(e) {
   e.preventDefault();
-  ipcRenderer.send('pet:right-click');
+  ctxMenu.style.display = "block";
+  ctxMenu.style.left = e.clientX + "px";
+  ctxMenu.style.top = e.clientY + "px";
+});
+document.addEventListener("click", function() {
+  ctxMenu.style.display = "none";
 });
 
-// ---- IPC listeners for settings ----
+// Menu item clicks
+ctxMenu.addEventListener('click', function(e) {
+  var action = e.target.getAttribute('data-action');
+  ctxMenu.style.display = 'none';
+  if (action === 'home') { ipcRenderer.send('pet:enter-home'); }
+  else if (action === 'feed') { ipcRenderer.send('pet:feed'); }
+  else if (action === 'game') { ipcRenderer.send('game:start', 'chase_cursor'); }
+  else if (action === 'settings') { ipcRenderer.send('settings:open'); }
+});
 ipcRenderer.on('settings:updated', (_event, config) => {
   if (config.currentRatColor) setRatColor(config.currentRatColor);
   if (config.alwaysOnTop !== undefined) {
