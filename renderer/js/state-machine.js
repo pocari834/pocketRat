@@ -283,12 +283,12 @@ class PetStateMachine {
 
     const now = Date.now();
     const idleTime = now - this.lastMouseMove;
-    if (idleTime > 45 * 60 * 1000) {
-      this.workMode = WorkMode.REST_REMINDER;
-      if (this.onBubbleShow) this.onBubbleShow('你已经工作很久了，休息一下吧！');
-    } else if (idleTime > 2 * 60 * 60 * 1000) {
+    if (idleTime > 2 * 60 * 60 * 1000) {
       this.workMode = WorkMode.DRINK_REMINDER;
       if (this.onBubbleShow) this.onBubbleShow('别忘了喝水哦！💧');
+    } else if (idleTime > 45 * 60 * 1000) {
+      this.workMode = WorkMode.REST_REMINDER;
+      if (this.onBubbleShow) this.onBubbleShow('你已经工作很久了，休息一下吧！');
     }
   }
 

@@ -18,10 +18,10 @@ class ChaseCursorGame {
     this.isRunning = false;
     this.score = 0;
     this.maxDuration = 60000;
-    this.petX = 150;
-    this.petY = 150;
-    this.targetX = 150;
-    this.targetY = 150;
+    this.petX = 100;
+    this.petY = 100;
+    this.targetX = 100;
+    this.targetY = 100;
     this.catchCount = 0;
     this.CATCH_THRESHOLD = 20;
     this.onEnd = null;
@@ -34,10 +34,21 @@ class ChaseCursorGame {
     this.catchCount = 0;
     this.startTime = Date.now();
     this._onMouseMove = (e) => {
-      this.targetX = e.clientX;
-      this.targetY = e.clientY;
+      const point = this.getCanvasPoint(e);
+      this.targetX = point.x;
+      this.targetY = point.y;
     };
     document.addEventListener('mousemove', this._onMouseMove);
+  }
+
+  getCanvasPoint(event) {
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
+    return {
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY,
+    };
   }
 
   update(deltaMs) {
@@ -107,7 +118,7 @@ class SnackRainGame {
     this.caught = 0;
     this.missed = 0;
     this.spawnTimer = 0;
-    this.petX = 150;
+    this.petX = 100;
     this.SNACK_EMOJIS = ['🌻', '🥕', '🧀', '🍎', '🥜'];
     this.onEnd = null;
     this.startTime = 0;
@@ -119,11 +130,15 @@ class SnackRainGame {
     this.missed = 0;
     this.snacks = [];
     this.startTime = Date.now();
-    this._onMouseMove = (e) => { this.petX = e.clientX; };
+    this._onMouseMove = (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const scaleX = this.canvas.width / rect.width;
+      this.petX = (e.clientX - rect.left) * scaleX;
+    };
     this._onClick = () => {
       this.snacks = this.snacks.filter(snack => {
         const dx = snack.x - this.petX;
-        const dy = snack.y - 260;
+        const dy = snack.y - 180;
         if (Math.abs(dx) < 30 && Math.abs(dy) < 30) {
           this.caught++;
           return false;
@@ -141,7 +156,7 @@ class SnackRainGame {
     if (this.spawnTimer > 600) {
       this.spawnTimer = 0;
       this.snacks.push({
-        x: 30 + Math.random() * 240,
+        x: 20 + Math.random() * 160,
         y: -20,
         type: this.SNACK_EMOJIS[Math.floor(Math.random() * this.SNACK_EMOJIS.length)],
         speed: 2 + Math.random() * 2,
@@ -149,7 +164,7 @@ class SnackRainGame {
     }
     for (const snack of this.snacks) snack.y += snack.speed;
     const before = this.snacks.length;
-    this.snacks = this.snacks.filter(s => s.y < 320);
+    this.snacks = this.snacks.filter(s => s.y < 220);
     this.missed += before - this.snacks.length;
     if (Date.now() - this.startTime > this.maxDuration) this.end();
   }
@@ -159,9 +174,9 @@ class SnackRainGame {
     this.ctx.font = '24px sans-serif';
     for (const snack of this.snacks) this.ctx.fillText(snack.type, snack.x, snack.y);
     this.ctx.fillStyle = '#8B4513';
-    this.ctx.fillRect(this.petX - 25, 250, 50, 30);
+    this.ctx.fillRect(this.petX - 25, 170, 50, 24);
     this.ctx.fillStyle = '#A0522D';
-    this.ctx.fillRect(this.petX - 20, 240, 40, 15);
+    this.ctx.fillRect(this.petX - 20, 160, 40, 14);
     this.ctx.fillStyle = '#333';
     this.ctx.font = 'bold 16px sans-serif';
     this.ctx.fillText('接住: ' + this.caught + ' | 漏掉: ' + this.missed, 10, 25);
@@ -232,9 +247,9 @@ class TunnelRaceGame {
     this.round++;
     this.guessed = false;
     this.isRevealing = false;
-    const positions = [60, 150, 240];
+    const positions = [45, 100, 155];
     const ratIndex = Math.floor(Math.random() * 3);
-    this.holes = positions.map((x, i) => ({ x, y: 180, hasRat: i === ratIndex }));
+    this.holes = positions.map((x, i) => ({ x, y: 135, hasRat: i === ratIndex }));
     setTimeout(() => { this.isRevealing = true; }, 1000);
   }
 
@@ -290,7 +305,7 @@ class CatchMeGame {
     this.isRunning = false;
     this.maxDuration = 60000;
     this.ballY = 50;
-    this.ballX = 150;
+    this.ballX = 100;
     this.ballVelocityY = 0;
     this.isLaunched = false;
     this.catchCount = 0;
@@ -327,7 +342,7 @@ class CatchMeGame {
   launchBall() {
     this.round++;
     this.ballY = 50;
-    this.ballX = 50 + Math.random() * 200;
+    this.ballX = 35 + Math.random() * 130;
     this.ballVelocityY = 0;
     this.isLaunched = true;
   }
@@ -336,7 +351,7 @@ class CatchMeGame {
     if (!this.isRunning || !this.isLaunched) return;
     this.ballVelocityY += this.gravity;
     this.ballY += this.ballVelocityY;
-    if (this.ballY > 320) {
+    if (this.ballY > 220) {
       this.isLaunched = false;
       setTimeout(() => {
         if (this.round >= this.maxRounds) this.end();
@@ -356,7 +371,7 @@ class CatchMeGame {
     this.ctx.stroke();
     this.ctx.fillStyle = '#A0A0A0';
     this.ctx.beginPath();
-    this.ctx.ellipse(150, 280, 25, 20, 0, 0, Math.PI * 2);
+    this.ctx.ellipse(100, 175, 25, 18, 0, 0, Math.PI * 2);
     this.ctx.fill();
     this.ctx.fillStyle = '#333';
     this.ctx.font = 'bold 16px sans-serif';
@@ -397,11 +412,11 @@ class MiniGameManager {
   startGame(type) {
     this.stopGame();
     this.gameCanvas = document.createElement('canvas');
-    this.gameCanvas.width = 300;
-    this.gameCanvas.height = 300;
+    this.gameCanvas.width = 200;
+    this.gameCanvas.height = 200;
     this.gameCanvas.style.cssText = `
       position: fixed; top: 0; left: 0;
-      width: 150px; height: 150px;
+      width: 200px; height: 200px;
       z-index: 9999;
       background: rgba(255,255,255,0.9);
       border-radius: 12px;

@@ -9,7 +9,14 @@ const { ipcRenderer } = require('electron');
 const stateMachine = new PetStateMachine();
 const workModeManager = new WorkModeManager();
 const miniGameManager = new MiniGameManager();
-const feedManager = new FeedManager();
+const feedManager = new FeedManager({
+  onFeed: () => {
+    stateMachine.handleInteraction(InteractionType.FEED);
+    workModeManager.recordActivity();
+    stateMachine.updateMouseActivity();
+    showBubble('好吃！🧀', 2000);
+  },
+});
 
 const interaction = new InteractionManager({
   onPet: () => {
@@ -144,6 +151,7 @@ document.addEventListener('mousemove', (e) => {
   }
 
   workModeManager.recordActivity();
+  stateMachine.updateMouseActivity();
 });
 
 // ---- IPC listeners for settings ----
@@ -173,8 +181,8 @@ ipcRenderer.on('game:stop', () => {
 
 // ---- Pet responds to right-click menu actions ----
 ipcRenderer.on('pet:feed', () => {
-  stateMachine.handleInteraction(InteractionType.FEED);
-  showBubble('好吃！🧀', 2000);
+  const isOpen = feedManager.toggleFeedMode();
+  showBubble(isOpen ? '拖一个零食给我吧~' : '下次再吃~', 2000);
 });
 
 ipcRenderer.on('pet:play', () => {

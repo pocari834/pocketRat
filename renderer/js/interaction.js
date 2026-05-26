@@ -140,10 +140,12 @@ class InteractionManager {
  * Feed System - Drag food items onto the pet
  */
 class FeedManager {
-  constructor() {
+  constructor(callbacks) {
     this.isFeedMode = false;
     this.feedElement = null;
+    this.callbacks = callbacks || {};
     this.createFeedUI();
+    this.setupFeedListeners();
   }
 
   createFeedUI() {
@@ -156,7 +158,7 @@ class FeedManager {
     `;
     this.feedElement.style.cssText = `
       position: absolute;
-      bottom: -50px;
+      bottom: 8px;
       left: 50%;
       transform: translateX(-50%);
       display: none;
@@ -165,8 +167,53 @@ class FeedManager {
       padding: 6px 10px;
       border-radius: 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      z-index: 20;
     `;
     document.body.appendChild(this.feedElement);
+  }
+
+  setupFeedListeners() {
+    if (!this.feedElement) return;
+
+    this.feedElement.querySelectorAll('.food-item').forEach((item) => {
+      item.addEventListener('click', () => this.selectFood(item.dataset.food));
+      item.addEventListener('dragstart', (event) => {
+        event.dataTransfer.setData('text/plain', item.dataset.food);
+        event.dataTransfer.effectAllowed = 'copy';
+      });
+    });
+
+    document.addEventListener('dragover', (event) => {
+      if (!this.isFeedMode) return;
+      event.preventDefault();
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'copy';
+      }
+    });
+
+    document.addEventListener('drop', (event) => {
+      if (!this.isFeedMode) return;
+      event.preventDefault();
+      const canvas = document.getElementById('canvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const insidePetWindow = event.clientX >= rect.left && event.clientX <= rect.right
+        && event.clientY >= rect.top && event.clientY <= rect.bottom;
+      if (insidePetWindow) {
+        this.selectFood(event.dataTransfer ? event.dataTransfer.getData('text/plain') : '');
+      }
+    });
+  }
+
+  selectFood(foodType) {
+    if (!foodType) return;
+    this.isFeedMode = false;
+    if (this.feedElement) {
+      this.feedElement.style.display = 'none';
+    }
+    if (this.callbacks.onFeed) {
+      this.callbacks.onFeed(foodType);
+    }
   }
 
   toggleFeedMode() {

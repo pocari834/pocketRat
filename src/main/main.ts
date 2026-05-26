@@ -146,7 +146,7 @@ function setupIPC(): void {
     const petMenu = Menu.buildFromTemplate([
       { label: '🏠 鼠宝的家', click: () => createHomeWindow() },
       { label: '🐹 喂食', click: () => mainWindow?.webContents.send('pet:feed') },
-      { label: '🎾 逗玩', click: () => mainWindow?.webContents.send('pet:play') },
+      { label: '🎾 追光标', click: () => mainWindow?.webContents.send('game:start', 'chase_cursor') },
       { type: 'separator' },
       { label: '⚙️ 设置', click: () => createSettingsWindow() },
     ]);
@@ -201,6 +201,7 @@ function setupIPC(): void {
 
   ipcMain.on('settings:save', (_event, data: Record<string, unknown>) => {
     store.setMultiple(data);
+    mainWindow?.webContents.send('settings:updated', data);
   });
 
   ipcMain.handle('settings:load', () => {
@@ -217,6 +218,10 @@ function setupIPC(): void {
 
   ipcMain.on('pet:set-opacity', (_event, opacity: number) => {
     mainWindow?.setOpacity(opacity);
+  });
+
+  ipcMain.on('app:quit', () => {
+    app.quit();
   });
 }
 
