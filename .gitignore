@@ -1,0 +1,21 @@
+node_modules/
+dist/
+release/
+*.js.map
+
+# 临时工具文件
+FIX_GIT_PATH.ps1
+GIT_QUICK_START.md
+GIT_SETUP.md
+git-init.bat
+git-init-fixed.bat
+git.cmd
+test-click-fix-verification.html
+test-click-fix.bat
+start-animation-test.bat
+stop-electron.ps1
+CLICK_FIX_SUMMARY.md
+ANIMATION_DECISION_SUMMARY.md
+ANIMATION_MIGRATION_GUIDE.md
+renderer/js/interaction-fixed.js
+renderer/js/renderer-v2.js

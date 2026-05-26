@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pocket Rat</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 200px;
+      height: 200px;
+      overflow: hidden;
+      background: transparent;
+      user-select: none;
+      -webkit-app-region: no-drag;
+    }
+    #canvas {
+      width: 200px;
+      height: 200px;
+    }
+    /* Speech bubble */
+    #bubble {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      color: #333;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-family: 'Segoe UI', sans-serif;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    #bubble.show { opacity: 1; }
+    #bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid white;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="200" height="200"></canvas>
+  <video id="dance-video" width="200" height="200" preload="auto" playsinline style="position:absolute;top:0;left:0;width:200px;height:200px;object-fit:contain;display:none;pointer-events:none;z-index:10;"></video>
+  <div id="bubble"></div>
+  <script src="./js/renderer.js"></script>
+  <script src="./js/state-machine.js"></script>
+  <script src="./js/interaction.js"></script>
+  <script src="./js/work-mode.js"></script>
+  <script src="./js/mini-games.js"></script>
+  <script src="./js/pet.js"></script>
+</body>
+</html>

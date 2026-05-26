@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pocket Rat 动画测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .test-area, .info-area {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        canvas {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto 15px;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        button.danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .status {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .status h3 {
+            margin-bottom: 10px;
+            color: #ffcc00;
+        }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .log-entry.info {
+            color: #4CAF50;
+        }
+        
+        .log-entry.warn {
+            color: #FF9800;
+        }
+        
+        .log-entry.error {
+            color: #F44336;
+        }
+        
+        .info-list {
+            list-style: none;
+        }
+        
+        .info-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .info-list strong {
+            color: #ffcc00;
+            display: inline-block;
+            width: 120px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .file-list {
+            margin-top: 20px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.2);
+            margin-bottom: 5px;
+            border-radius: 6px;
+        }
+        
+        .file-item.loaded {
+            background: rgba(76, 175, 80, 0.2);
+        }
+        
+        .file-item.error {
+            background: rgba(244, 67, 54, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐹 Pocket Rat 动画系统测试</h1>
+            <p class="subtitle">测试 PNG 序列帧动画系统，替换原来的视频方案</p>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="test-area">
+                <h2>🎬 动画测试</h2>
+                <div class="canvas-container">
+                    <canvas id="testCanvas" width="200" height="200"></canvas>
+                    <p>Canvas 大小: 200×200px</p>
+                </div>
+                
+                <div class="controls">
+                    <button onclick="initSystem()" class="primary">初始化系统</button>
+                    <button onclick="playIdle()">待机动画</button>
+                    <button onclick="playDance()">跳舞动画</button>
+                    <button onclick="playWalk()">走路动画</button>
+                    <button onclick="playSleep()">睡觉动画</button>
+                    <button onclick="stopAnimation()" class="danger">停止动画</button>
+                </div>
+                
+                <div class="status">
+                    <h3>系统状态</h3>
+                    <div id="systemStatus">未初始化</div>
+                    <div id="animationStatus">无动画播放</div>
+                </div>
+                
+                <div class="log">
+                    <h3>控制台日志</h3>
+                    <div id="logOutput"></div>
+                </div>
+            </div>
+            
+            <div class="info-area">
+                <h2>📊 系统信息</h2>
+                <ul class="info-list">
+                    <li><strong>当前方案:</strong> PNG 序列帧</li>
+                    <li><strong>透明背景:</strong> ✅ 支持</li>
+                    <li><strong>帧率控制:</strong> ✅ 精确</li>
+                    <li><strong>文件大小:</strong> 可优化</li>
+                    <li><strong>兼容性:</strong> 所有现代浏览器</li>
+                    <li><strong>性能:</strong> ⭐⭐⭐⭐⭐</li>
+                </ul>
+                
+                <div class="file-list">
+                    <h3>📁 文件结构</h3>
+                    <div id="fileList">
+                        <!-- 文件列表会动态生成 -->
+                    </div>
+                </div>
+                
+                <h3>🎯 下一步操作</h3>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>切割精灵图为 PNG 序列帧</li>
+                    <li>替换 pet.html 中的渲染器</li>
+                    <li>测试透明背景效果</li>
+                    <li>移除视频相关代码</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 简单的动画系统模拟（用于测试）
+        class SimpleAnimationSystem {
+            constructor() {
+                this.initialized = false;
+                this.currentAnimation = null;
+                this.frame = 0;
+                this.lastTime = 0;
+                this.animations = {
+                    idle: { frames: 6, fps: 8, loop: true },
+                    walk: { frames: 8, fps: 12, loop: true },
+                    dance: { frames: 12, fps: 15, loop: false },
+                    sleep: { frames: 8, fps: 6, loop: true }
+                };
+                this.logs = [];
+            }
+            
+            init() {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        this.initialized = true;
+                        this.log('系统初始化成功', 'info');
+                        resolve();
+                    }, 500);
+                });
+            }
+            
+            play(animationName) {
+                if (!this.initialized) {
+                    this.log('请先初始化系统', 'warn');
+                    return false;
+                }
+                
+                if (!this.animations[animationName]) {
+                    this.log(`动画 "${animationName}" 不存在`, 'error');
+                    return false;
+                }
+                
+                this.currentAnimation = animationName;
+                this.frame = 0;
+                this.lastTime = performance.now();
+                this.log(`开始播放动画: ${animationName}`, 'info');
+                return true;
+            }
+            
+            stop() {
+                if (this.currentAnimation) {
+                    this.log(`停止动画: ${this.currentAnimation}`, 'info');
+                    this.currentAnimation = null;
+                }
+            }
+            
+            update() {
+                if (!this.currentAnimation) return;
+                
+                const now = performance.now();
+                const delta = now - this.lastTime;
+                const anim = this.animations[this.currentAnimation];
+                const frameDuration = 1000 / anim.fps;
+                
+                if (delta >= frameDuration) {
+                    this.frame++;
+                    this.lastTime = now;
+                    
+                    if (this.frame >= anim.frames) {
+                        if (anim.loop) {
+                            this.frame = 0;
+                        } else {
+                            this.log(`动画 ${this.currentAnimation} 播放完成`, 'info');
+                            this.currentAnimation = null;
+                        }
+                    }
+                }
+            }
+            
+            getCurrentFrame() {
+                if (!this.currentAnimation) return 0;
+                return this.frame % this.animations[this.currentAnimation].frames;
+            }
+            
+            getStatus() {
+                if (!this.initialized) return '未初始化';
+                if (!this.currentAnimation) return '待机中';
+                return `播放中: ${this.currentAnimation} (帧: ${this.getCurrentFrame() + 1})`;
+            }
+            
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = {
+                    time: timestamp,
+                    message,
+                    type
+                };
+                this.logs.push(logEntry);
+                updateLogDisplay();
+            }
+            
+            getFileList() {
+                return [
+                    { name: 'idle_l_01.png', status: 'loaded' },
+                    { name: 'idle_l_02.png', status: 'loaded' },
+                    { name: 'idle_l_03.png', status: 'loaded' },
+                    { name: 'idle_l_04.png', status: 'error' },
+                    { name: 'idle_l_05.png', status: 'pending' },
+                    { name: 'idle_l_06.png', status: 'pending' },
+                    { name: 'dance_l_01.png', status: 'pending' },
+                    { name: 'dance_l_02.png', status: 'pending' }
+                ];
+            }
+        }
+        
+        // 全局实例
+        const animSystem = new SimpleAnimationSystem();
+        const canvas = document.getElementById('testCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 更新显示的函数
+        function updateDisplay() {
+            // 更新系统状态
+            document.getElementById('systemStatus').textContent = 
+                animSystem.initialized ? '✅ 已初始化' : '❌ 未初始化';
+            document.getElementById('animationStatus').textContent = animSystem.getStatus();
+            
+            // 更新进度条
+            const progress = animSystem.initialized ? 100 : 0;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // 更新文件列表
+            updateFileList();
+            
+            // 绘制动画
+            drawAnimation();
+            
+            // 继续动画循环
+            requestAnimationFrame(updateDisplay);
+        }
+        
+        function updateLogDisplay() {
+            const logOutput = document.getElementById('logOutput');
+            logOutput.innerHTML = '';
+            
+            animSystem.logs.slice(-10).forEach(log => {
+                const div = document.createElement('div');
+                div.className = `log-entry ${log.type}`;
+                div.textContent = `[${log.time}] ${log.message}`;
+                logOutput.appendChild(div);
+            });
+            
+            // 自动滚动到底部
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+        
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            animSystem.getFileList().forEach(file => {
+                const div = document.createElement('div');
+                div.className = `file-item ${file.status}`;
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = file.name;
+                
+                const statusSpan = document.createElement('span');
+                statusSpan.textContent = {
+                    loaded: '✅ 已加载',
+                    pending: '⏳ 待加载',
+                    error: '❌ 错误'
+                }[file.status] || file.status;
+                
+                div.appendChild(nameSpan);
+                div.appendChild(statusSpan);
+                fileList.appendChild(div);
+            });
+        }
+        
+        function drawAnimation() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制网格背景（测试透明效果）
+            drawGrid();
+            
+            // 绘制当前帧
+            if (animSystem.currentAnimation) {
+                const frame = animSystem.getCurrentFrame();
+                drawFrame(frame, animSystem.currentAnimation);
+            } else {
+                drawIdle();
+            }
+            
+            // 更新动画状态
+            animSystem.update();
+        }
+        
+        function drawGrid() {
+            const size = 20;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            
+            // 垂直线
+            for (let x = 0; x <= canvas.width; x += size) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            // 水平线
+            for (let y = 0; y <= canvas.height; y += size) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+        
+        function drawFrame(frame, animation) {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // 不同动画的不同效果
+            let radius = 50;
+            let color = '#4CAF50';
+            let offsetY = 0;
+            
+            switch (animation) {
+                case 'idle':
+                    color = '#4CAF50';
+                    offsetY = Math.sin(Date.now() * 0.001) * 5;
+                    break;
+                case 'walk':
+                    color = '#2196F3';
+                    offsetY = Math.sin(Date.now() * 0.005) * 10;
+                    radius = 45;
+                    break;
+                case 'dance':
+                    color = '#9C27B0';
+                    offsetY = Math.sin(Date.now() * 0.01) * 15;
+                    radius = 55;
+                    break;
+                case 'sleep':
+                    color = '#FF9800';
+                    offsetY = Math.sin(Date.now() * 0.002) * 3;
+                    break;
+            }
+            
+            // 绘制主体
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY + offsetY, radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 绘制帧号
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${animation}\n帧: ${frame + 1}`, centerX, centerY + offsetY);
+        }
+        
+        function drawIdle() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // 绘制待机状态
+            ctx.fillStyle = 'rgba(76, 175, 80, 0.5)';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 40, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('待机中', centerX, centerY);
+        }
+        
+        // 控制函数
+        async function initSystem() {
+            await animSystem.init();
+            animSystem.log('点击按钮测试不同动画', 'info');
+        }
+        
+        function playIdle() {
+            animSystem.play('idle');
+        }
+        
+        function playWalk() {
+            animSystem.play('walk');
+        }
+        
+        function playDance() {
+            animSystem.play('dance');
+        }
+        
+        function playSleep() {
+            animSystem.play('sleep');
+        }
+        
+        function stopAnimation() {
+            animSystem.stop();
+        }
+        
+        // 初始化显示
+        updateDisplay();
+        animSystem.log('动画测试页面已加载', 'info');
+        animSystem.log('点击"初始化系统"开始测试', 'info');
+    </script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pocket Rat Settings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 380px;
+      height: 520px;
+      font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(135deg, #FF9A9E, #FECFEF);
+      padding: 16px 20px;
+      border-radius: 16px 16px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      font-size: 18px;
+      color: #fff;
+    }
+    .close-btn {
+      background: rgba(255,255,255,0.3);
+      border: none;
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .close-btn:hover {
+      background: rgba(255,255,255,0.5);
+    }
+    .section {
+      padding: 12px 20px;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-label {
+      font-size: 14px;
+      color: #444;
+    }
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .slider {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #ccc;
+      border-radius: 24px;
+      transition: 0.3s;
+    }
+    .toggle .slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+    .toggle input:checked + .slider {
+      background: #FF9A9E;
+    }
+    .toggle input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+    /* Rat card */
+    .rat-card {
+      background: linear-gradient(135deg, #FFF5F5, #FFF0F5);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .rat-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .rat-info {
+      flex: 1;
+    }
+    .rat-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+    .rat-select-btn {
+      background: #FF9A9E;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .rat-select-btn:hover { background: #FF7A7E; }
+    /* Task cards */
+    .task-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .task-label {
+      font-size: 13px;
+      color: #555;
+    }
+    .task-btn {
+      background: #FF9A9E;
+      color: white;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .task-btn:hover { background: #FF7A7E; }
+    .task-btn.secondary {
+      background: #e0e0e0;
+      color: #555;
+    }
+    .task-btn.secondary:hover { background: #d0d0d0; }
+    /* Bottom nav */
+    .bottom-nav {
+      display: flex;
+      border-top: 1px solid #eee;
+      background: #fff;
+      border-radius: 0 0 16px 16px;
+    }
+    .nav-item {
+      flex: 1;
+      text-align: center;
+      padding: 12px 0;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .nav-item:hover { background: #f5f5f5; }
+    .nav-item .icon { font-size: 20px; }
+    .nav-item .label { font-size: 11px; color: #888; margin-top: 2px; }
+    /* Exit button */
+    .exit-btn {
+      display: block;
+      width: calc(100% - 40px);
+      margin: 12px 20px;
+      padding: 10px;
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #999;
+      cursor: pointer;
+      text-align: center;
+    }
+    .exit-btn:hover { background: #fee; color: #e55; border-color: #e55; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🐹 口袋鼠宝 - 设置</h1>
+    <button class="close-btn" id="closeBtn">✕</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title">显示设置</div>
+    <div class="setting-row">
+      <span class="setting-label">置顶模式</span>
+      <label class="toggle">
+        <input type="checkbox" id="alwaysOnTop" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">穿透点击</span>
+      <label class="toggle">
+        <input type="checkbox" id="clickThrough" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">半透明模式</span>
+      <label class="toggle">
+        <input type="checkbox" id="semiTransparent">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">贴边隐藏</span>
+      <label class="toggle">
+        <input type="checkbox" id="hideOnEdge" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">开机自启动</span>
+      <label class="toggle">
+        <input type="checkbox" id="autoStart">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">鼠宝管理</div>
+    <div class="rat-card">
+      <div class="rat-avatar" id="ratAvatar" style="background: #A0A0A0;">🐹</div>
+      <div class="rat-info">
+        <div class="rat-name" id="ratName">灰灰</div>
+      </div>
+      <button class="rat-select-btn" id="selectRatBtn">选择其他鼠宝 →</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">每日任务</div>
+    <div class="task-card">
+      <span class="task-label">🎁 今日奖励</span>
+      <button class="task-btn" id="claimRewardBtn">领取</button>
+    </div>
+    <div class="task-card">
+      <span class="task-label">📊 查看详细状态</span>
+      <button class="task-btn secondary" id="viewStatusBtn">→</button>
+    </div>
+    <div class="task-card">
+      <span class="task-label">🔗 同步手机数据</span>
+      <button class="task-btn" id="syncBtn">立即同步</button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" id="shopNav">
+      <div class="icon">🛒</div>
+      <div class="label">商店</div>
+    </div>
+    <div class="nav-item" id="achieveNav">
+      <div class="icon">🏆</div>
+      <div class="label">成就</div>
+    </div>
+    <div class="nav-item" id="workshopNav">
+      <div class="icon">🎨</div>
+      <div class="label">工坊</div>
+    </div>
+  </div>
+
+  <button class="exit-btn" id="exitBtn">❌ 退出桌宠</button>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    // Load settings
+    async function loadSettings() {
+      const config = await ipcRenderer.invoke('settings:load');
+      if (!config) return;
+
+      document.getElementById('alwaysOnTop').checked = config.alwaysOnTop ?? true;
+      document.getElementById('clickThrough').checked = config.clickThrough ?? true;
+      document.getElementById('semiTransparent').checked = config.semiTransparent ?? false;
+      document.getElementById('hideOnEdge').checked = config.hideOnEdge ?? true;
+      document.getElementById('autoStart').checked = config.autoStart ?? false;
+
+      if (config.currentRatName) {
+        document.getElementById('ratName').textContent = config.currentRatName;
+      }
+      if (config.currentRatColor) {
+        document.getElementById('ratAvatar').style.background = config.currentRatColor;
+      }
+    }
+
+    // Save settings on change
+    function saveSettings() {
+      const data = {
+        alwaysOnTop: document.getElementById('alwaysOnTop').checked,
+        clickThrough: document.getElementById('clickThrough').checked,
+        semiTransparent: document.getElementById('semiTransparent').checked,
+        hideOnEdge: document.getElementById('hideOnEdge').checked,
+        autoStart: document.getElementById('autoStart').checked,
+      };
+      ipcRenderer.send('settings:save', data);
+    }
+
+    // Bind toggles
+    document.querySelectorAll('.toggle input').forEach(input => {
+      input.addEventListener('change', saveSettings);
+    });
+
+    // Close button
+    document.getElementById('closeBtn').addEventListener('click', () => {
+      ipcRenderer.send('settings:close');
+    });
+
+    // Exit button
+    document.getElementById('exitBtn').addEventListener('click', () => {
+      require('electron').remote.app.quit();
+    });
+
+    // Sync button
+    document.getElementById('syncBtn').addEventListener('click', () => {
+      ipcRenderer.send('tray:notify', 'Pocket Rat', '正在同步手机数据...');
+    });
+
+    // Load on start
+    loadSettings();
+  </script>
+</body>
+</html>
