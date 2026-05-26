@@ -153,7 +153,7 @@ function setupIPC(): void {
         { type: 'separator' },
         { label: '设置', click: () => createSettingsWindow() },
       ]);
-      if (mainWindow) petMenu.popup({ window: mainWindow });
+      if (mainWindow) { mainWindow.focus(); petMenu.popup({ window: mainWindow }); }
     } catch (e) { /* ignore */ }
   });
 
