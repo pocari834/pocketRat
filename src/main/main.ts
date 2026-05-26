@@ -226,7 +226,7 @@ function setupIPC(): void {
 
   // Pet stats persistence
   ipcMain.on('pet-stats:save', (_event, data: { hunger: number; mood: number; energy: number; lastSaveTime: number }) => {
-    store.setPetStats(data.hunger, data.mood, data.energy, data.lastSaveTime);
+    try { store.setPetStats(data.hunger, data.mood, data.energy, data.lastSaveTime); } catch (e) { console.error('[pet-stats:save]', e); }
   });
 
   ipcMain.handle('pet-stats:load', () => {
@@ -237,7 +237,6 @@ function setupIPC(): void {
 app.whenReady().then(() => {
   store = new AppStore();
 
-  // Save pet stats before quit
   createMainWindow();
   createTray();
   setupIPC();
