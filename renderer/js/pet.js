@@ -180,6 +180,10 @@ document.addEventListener('mousemove', (e) => {
 
 // ---- Custom right-click menu ----
 var ctxMenu = document.getElementById("ctx-menu");
+// Move menu to document level to escape overflow:hidden
+if (ctxMenu && ctxMenu.parentNode !== document.documentElement) {
+  document.documentElement.appendChild(ctxMenu);
+}
 document.addEventListener("contextmenu", function(e) {
   e.preventDefault();
   if (ctxMenu && ctxMenu.style) { ctxMenu.style.display = "block"; ctxMenu.style.left = e.clientX + "px"; ctxMenu.style.top = e.clientY + "px"; }
