@@ -49,7 +49,7 @@ function createMainWindow(): BrowserWindow {
   mainWindow.webContents.on('console-message', (_event, level, message) => {
     try {
       const prefix = ["LOG", "WARN", "ERROR"][level] || "LOG";
-      console.log(`[Renderer ${prefix}] ${message}`);
+      try { console.log(`[Renderer ${prefix}] ${message}`); } catch (_) {}
     } catch (_) { /* ignore broken pipe */ }
   });
   return mainWindow;
