@@ -150,7 +150,7 @@ function setupIPC(): void {
       { type: 'separator' },
       { label: '⚙️ 设置', click: () => createSettingsWindow() },
     ]);
-    petMenu.popup();
+    petMenu.popup({ window: mainWindow });
   });
 
   ipcMain.on('pet:toggle-penetrate', (_event, enabled: boolean) => {
