@@ -13,9 +13,9 @@ class PetStats {
     this.lastSaveTime = Date.now();
 
     this.decayRates = {
-      hunger: 0.05,
-      mood: 0.03,
-      energy: 0.02,
+      hunger: 0.01,
+      mood: 0.006,
+      energy: 0.004,
     };
 
     this.sleepRecovery = 1.0;

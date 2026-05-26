@@ -176,6 +176,13 @@ document.addEventListener('mousemove', (e) => {
   if (isInside) { showStatsPanel(); } else { hideStatsPanelDelayed(); }
 });
 
+
+});
+  ipcRenderer.send('pet:right-click');
+  e.preventDefault();
+document.addEventListener('contextmenu', (e) => {
+// ---- Right-click context menu (fallback) ----
+
 // ---- IPC listeners for settings ----
 ipcRenderer.on('settings:updated', (_event, config) => {
   if (config.currentRatColor) setRatColor(config.currentRatColor);
