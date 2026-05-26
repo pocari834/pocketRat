@@ -3,7 +3,7 @@ import Store from 'electron-store';
 
 const defaults: Record<string, unknown> = {
   alwaysOnTop: true,
-  clickThrough: true,
+  clickThrough: false,
   semiTransparent: false,
   hideOnEdge: true,
   autoStart: false,
