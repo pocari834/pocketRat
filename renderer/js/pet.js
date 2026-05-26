@@ -12,7 +12,7 @@ const stateMachine = new PetStateMachine();
 const petStats = new PetStats();
 
 // Auto-save stats every 30 seconds
-setInterval(() => { petStats.save(); }, 30000);
+setInterval(() => { petStats.save(); }, 15000);
 const workModeManager = new WorkModeManager();
 const miniGameManager = new MiniGameManager();
 const feedManager = new FeedManager({
@@ -221,11 +221,6 @@ function dismissReminderIfNeeded() {
   workModeManager.dismissReminder();
 }
 
-
-// ---- Save stats on close ----
-window.addEventListener('beforeunload', () => {
-  petStats.save();
-});
 
 // ---- Start ----
 loadConfig().then(() => {
