@@ -16,7 +16,8 @@ function createMainWindow(): BrowserWindow {
     height: 200,
     x: screenWidth - 250,
     y: screenHeight - 250,
-    transparent: true,
+    transparent: false,
+    backgroundColor: '#FFE0E0',
     frame: false,
     resizable: false,
     alwaysOnTop: true,
@@ -47,9 +48,10 @@ function createMainWindow(): BrowserWindow {
 
   mainWindow.webContents.on('console-message', (_event, level, message) => {
     try {
-      const prefix = ['LOG', 'WARN', 'ERROR'][level] || 'LOG';
-      console.log([Renderer ${prefix}] ${message});
+      const prefix = ["LOG", "WARN", "ERROR"][level] || "LOG";
+      console.log(`[Renderer ${prefix}] ${message}`);
     } catch (_) { /* ignore broken pipe */ }
+  });
   return mainWindow;
 }
 
@@ -150,7 +152,7 @@ function setupIPC(): void {
       { type: 'separator' },
       { label: '⚙️ 设置', click: () => createSettingsWindow() },
     ]);
-    petMenu.popup({ window: BrowserWindow.fromWebContents(event.sender) || mainWindow });
+    petMenu.popup({ window: BrowserWindow.fromWebContents(event.sender) ?? undefined });
   });
 
   ipcMain.on('pet:toggle-penetrate', (_event, enabled: boolean) => {
