@@ -177,11 +177,12 @@ document.addEventListener('mousemove', (e) => {
 });
 
 
-});
-  ipcRenderer.send('pet:right-click');
-  e.preventDefault();
-document.addEventListener('contextmenu', (e) => {
+
 // ---- Right-click context menu (fallback) ----
+document.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  ipcRenderer.send('pet:right-click');
+});
 
 // ---- IPC listeners for settings ----
 ipcRenderer.on('settings:updated', (_event, config) => {
