@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Pet Renderer - Pixel art style pet visualization
  * Draws a cute pixel rat directly with Canvas, no external image files needed
  */
@@ -422,6 +422,40 @@ function drawScareEffect(ctx, frame) {
 }
 
 // ---- Speech bubble ----
+
+// ---- Stats UI ----
+function updateStatsUI(hunger, mood, energy) {
+  var panel = document.getElementById('stats-panel');
+  var hungerFill = document.getElementById('stat-hunger-fill');
+  var moodFill = document.getElementById('stat-mood-fill');
+  var energyFill = document.getElementById('stat-energy-fill');
+  var hungerVal = document.getElementById('stat-hunger-val');
+  var moodVal = document.getElementById('stat-mood-val');
+  var energyVal = document.getElementById('stat-energy-val');
+
+  if (hungerFill) { hungerFill.style.width = Math.round(hunger) + '%'; }
+  if (moodFill)   { moodFill.style.width   = Math.round(mood)   + '%'; }
+  if (energyFill) { energyFill.style.width = Math.round(energy) + '%'; }
+  if (hungerVal)  { hungerVal.textContent  = Math.round(hunger); }
+  if (moodVal)    { moodVal.textContent    = Math.round(mood); }
+  if (energyVal)  { energyVal.textContent  = Math.round(energy); }
+}
+
+var statsHideTimer = null;
+function showStatsPanel() {
+  var panel = document.getElementById('stats-panel');
+  if (panel) {
+    panel.classList.add('show');
+    if (statsHideTimer) clearTimeout(statsHideTimer);
+  }
+}
+function hideStatsPanelDelayed() {
+  statsHideTimer = setTimeout(function() {
+    var panel = document.getElementById('stats-panel');
+    if (panel) panel.classList.remove('show');
+  }, 1000);
+}
+
 function showBubble(text, duration) {
   duration = duration || 3000;
   const bubble = document.getElementById('bubble');

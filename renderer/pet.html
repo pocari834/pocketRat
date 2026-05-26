@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -47,17 +47,68 @@
       border-right: 6px solid transparent;
       border-top: 6px solid white;
     }
+
+    /* Stats bars */
+    #stats-panel {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.92);
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-family: 'Segoe UI', sans-serif;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 100px;
+    }
+    #stats-panel.show { opacity: 1; }
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .stat-icon { font-size: 12px; width: 16px; text-align: center; }
+    .stat-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: #E0E0E0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+    .stat-bar-fill.hunger { background: #FF9800; }
+    .stat-bar-fill.mood   { background: #E91E63; }
+    .stat-bar-fill.energy { background: #2196F3; }
+    .stat-val { width: 22px; text-align: right; color: #666; font-size: 9px; }
   </style>
 </head>
 <body>
   <canvas id="canvas" width="200" height="200"></canvas>
   <video id="dance-video" width="200" height="200" preload="auto" playsinline style="position:absolute;top:0;left:0;width:200px;height:200px;object-fit:contain;display:none;pointer-events:none;z-index:10;"></video>
+  <div id="stats-panel">
+    <div class="stat-row"><span class="stat-icon">🍔</span><div class="stat-bar-bg"><div id="stat-hunger-fill" class="stat-bar-fill hunger" style="width:100%"></div></div><span id="stat-hunger-val" class="stat-val">100</span></div>
+    <div class="stat-row"><span class="stat-icon">😊</span><div class="stat-bar-bg"><div id="stat-mood-fill" class="stat-bar-fill mood" style="width:100%"></div></div><span id="stat-mood-val" class="stat-val">100</span></div>
+    <div class="stat-row"><span class="stat-icon">⚡</span><div class="stat-bar-bg"><div id="stat-energy-fill" class="stat-bar-fill energy" style="width:100%"></div></div><span id="stat-energy-val" class="stat-val">100</span></div>
+  </div>
   <div id="bubble"></div>
   <script src="./js/renderer.js"></script>
   <script src="./js/state-machine.js"></script>
   <script src="./js/interaction.js"></script>
   <script src="./js/work-mode.js"></script>
   <script src="./js/mini-games.js"></script>
+  <script src="./js/pet-stats.js"></script>
   <script src="./js/pet.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Pet Main Entry Point
  * Connects all systems: renderer, state machine, interaction, work mode, mini games
  */
@@ -7,11 +7,19 @@ const { ipcRenderer } = require('electron');
 
 // ---- Initialize systems ----
 const stateMachine = new PetStateMachine();
+
+// ---- Initialize pet stats ----
+const petStats = new PetStats();
+
+// Auto-save stats every 30 seconds
+setInterval(() => { petStats.save(); }, 30000);
 const workModeManager = new WorkModeManager();
 const miniGameManager = new MiniGameManager();
 const feedManager = new FeedManager({
   onFeed: () => {
     stateMachine.handleInteraction(InteractionType.FEED);
+    petStats.modifyHunger(30);
+    petStats.modifyMood(5);
     workModeManager.recordActivity();
     stateMachine.updateMouseActivity();
     showBubble('好吃！🧀', 2000);
@@ -21,17 +29,22 @@ const feedManager = new FeedManager({
 const interaction = new InteractionManager({
   onPet: () => {
     stateMachine.handleInteraction(InteractionType.PET);
+    petStats.modifyMood(20);
     workModeManager.recordActivity();
     dismissReminderIfNeeded();
   },
   onFeed: () => {
     stateMachine.handleInteraction(InteractionType.FEED);
+    petStats.modifyHunger(30);
+    petStats.modifyMood(5);
     workModeManager.recordActivity();
   },
   onClick: () => {
     stateMachine.handleInteraction(InteractionType.CLICK);
     workModeManager.recordActivity();
     dismissReminderIfNeeded();
+    petStats.modifyMood(15);
+    petStats.modifyEnergy(-5);
   },
   onScare: () => {
     stateMachine.handleInteraction(InteractionType.SCARE);
@@ -81,12 +94,15 @@ workModeManager.setCallbacks(
 
 miniGameManager.setCallbacks((result) => {
   console.log('Game ended: ' + result.gameType + ', score: ' + result.score + ', coins: ' + result.coins);
+  petStats.modifyMood(25);
+  petStats.modifyEnergy(-10);
   showBubble('得分: ' + result.score + '！金币 +' + result.coins + ' 🎉', 3000);
 });
 
 // ---- Load config ----
 async function loadConfig() {
   try {
+    await petStats.load();
     const config = await ipcRenderer.invoke('settings:load');
     if (config) {
       if (config.currentRatColor) setRatColor(config.currentRatColor);
@@ -112,7 +128,9 @@ ipcRenderer.on('pet:position', (_event, pos) => {
 
 // ---- Main game loop ----
 let lastTime = performance.now();
+
 let currentFps = 30;
+
 
 function gameLoop(timestamp) {
   const delta = timestamp - lastTime;
@@ -122,8 +140,11 @@ function gameLoop(timestamp) {
   if (targetFps !== currentFps) currentFps = targetFps;
 
   stateMachine.update(delta);
-  drawRat(stateMachine.getState(), stateMachine.getFrame(), stateMachine.getDirection());
+  petStats.update(delta, stateMachine.getState());
+  stateMachine.setWeightModifiers(petStats.getWeightModifiers());
 
+  drawRat(stateMachine.getState(), stateMachine.getFrame(), stateMachine.getDirection());
+  updateStatsUI(petStats.hunger, petStats.mood, petStats.energy);
   const interval = 1000 / currentFps;
   const elapsed = performance.now() - timestamp;
 
@@ -152,6 +173,7 @@ document.addEventListener('mousemove', (e) => {
 
   workModeManager.recordActivity();
   stateMachine.updateMouseActivity();
+  if (isInside) { showStatsPanel(); } else { hideStatsPanelDelayed(); }
 });
 
 // ---- IPC listeners for settings ----
@@ -172,6 +194,8 @@ ipcRenderer.on('settings:updated', (_event, config) => {
 });
 
 ipcRenderer.on('game:start', (_event, gameType) => {
+  petStats.modifyMood(15);
+  petStats.modifyEnergy(-5);
   miniGameManager.startGame(gameType);
 });
 
@@ -181,6 +205,8 @@ ipcRenderer.on('game:stop', () => {
 
 // ---- Pet responds to right-click menu actions ----
 ipcRenderer.on('pet:feed', () => {
+  petStats.modifyHunger(30);
+  petStats.modifyMood(5);
   const isOpen = feedManager.toggleFeedMode();
   showBubble(isOpen ? '拖一个零食给我吧~' : '下次再吃~', 2000);
 });
@@ -195,6 +221,11 @@ function dismissReminderIfNeeded() {
   workModeManager.dismissReminder();
 }
 
+
+// ---- Save stats before quit ----
+ipcRenderer.on('pet-stats:save-before-quit', () => {
+  petStats.save();
+});
 // ---- Start ----
 loadConfig().then(() => {
   workModeManager.startMonitoring();

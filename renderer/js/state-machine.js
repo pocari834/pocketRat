@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Pet State Machine - Manages all 7 core behaviors
  * States: IDLE, WALK, SLEEP, CHEW, GROOM, STAND, FOLLOW, TUNNEL
  */
@@ -131,6 +131,7 @@ class PetStateMachine {
     this.lastMouseMove = Date.now();
     this.chewTimer = 0;
     this.groomTimer = 0;
+    this.weightModifiers = {};
     this.CHEW_INTERVAL = 15 * 60 * 1000;
     this.GROOM_INTERVAL = 20 * 60 * 1000;
     this.onStateChange = null;
@@ -300,20 +301,33 @@ class PetStateMachine {
     if (this.onStateChange) this.onStateChange(state, this.direction);
   }
 
+  setWeightModifiers(mods) {
+    this.weightModifiers = mods || {};
+  }
+
   pickNextState() {
     const config = STATE_CONFIG[this.currentState];
     if (!config || !config.nextWeights) {
       console.warn('[StateMachine] Missing nextWeights for state:', this.currentState);
       return PetState.IDLE;
     }
-    const weights = config.nextWeights;
-    const totalWeight = weights.reduce((sum, w) => sum + w.weight, 0);
-    let random = Math.random() * totalWeight;
-    for (const { state, weight } of weights) {
-      random -= weight;
-      if (random <= 0) return state;
+    var weights = config.nextWeights;
+    var mods = this.weightModifiers;
+    var totalWeight = 0;
+    var weightedItems = [];
+    for (var i = 0; i < weights.length; i++) {
+      var w = weights[i];
+      var multiplier = mods[w.state] || 1;
+      var adjustedWeight = w.weight * multiplier;
+      totalWeight += adjustedWeight;
+      weightedItems.push({ state: w.state, weight: adjustedWeight });
     }
-    return weights[0].state;
+    var random = Math.random() * totalWeight;
+    for (var j = 0; j < weightedItems.length; j++) {
+      random -= weightedItems[j].weight;
+      if (random <= 0) return weightedItems[j].state;
+    }
+    return weightedItems[0].state;
   }
 
   resetStateDuration() {

@@ -1,4 +1,4 @@
-// @ts-nocheck - electron-store 类型定义不完整，跳过类型检查
+﻿// @ts-nocheck - electron-store 类型定义不完整，跳过类型检查
 import Store from 'electron-store';
 
 const defaults: Record<string, unknown> = {
@@ -16,6 +16,10 @@ const defaults: Record<string, unknown> = {
   restIntervalMinutes: 45,
   drinkIntervalMinutes: 120,
   volume: 0.7,
+  petStatsHunger: 100,
+  petStatsMood: 100,
+  petStatsEnergy: 100,
+  petStatsLastSaveTime: 0,
 };
 
 export class AppStore {
@@ -40,6 +44,22 @@ export class AppStore {
     this.store.set(data);
   }
 
+
+  getPetStats(): Record<string, unknown> {
+    return {
+      hunger: this.store.get('petStatsHunger'),
+      mood: this.store.get('petStatsMood'),
+      energy: this.store.get('petStatsEnergy'),
+      lastSaveTime: this.store.get('petStatsLastSaveTime'),
+    };
+  }
+
+  setPetStats(hunger: number, mood: number, energy: number, lastSaveTime: number): void {
+    this.store.set('petStatsHunger', hunger);
+    this.store.set('petStatsMood', mood);
+    this.store.set('petStatsEnergy', energy);
+    this.store.set('petStatsLastSaveTime', lastSaveTime);
+  }
   getAll(): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     for (const key of Object.keys(defaults)) {

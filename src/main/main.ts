@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Tray, Menu, ipcMain, screen, nativeImage } from 'electron';
+﻿import { app, BrowserWindow, Tray, Menu, ipcMain, screen, nativeImage } from 'electron';
 import * as path from 'path';
 import { AppStore } from './store';
 
@@ -223,10 +223,26 @@ function setupIPC(): void {
   ipcMain.on('app:quit', () => {
     app.quit();
   });
+
+  // Pet stats persistence
+  ipcMain.on('pet-stats:save', (_event, data: { hunger: number; mood: number; energy: number; lastSaveTime: number }) => {
+    store.setPetStats(data.hunger, data.mood, data.energy, data.lastSaveTime);
+  });
+
+  ipcMain.handle('pet-stats:load', () => {
+    return store.getPetStats();
+  });
 }
 
 app.whenReady().then(() => {
   store = new AppStore();
+
+  // Save pet stats before quit
+  app.on('before-quit', () => {
+    if (mainWindow) {
+      mainWindow.webContents.send('pet-stats:save-before-quit');
+    }
+  });
   createMainWindow();
   createTray();
   setupIPC();
