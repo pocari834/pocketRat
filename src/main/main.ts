@@ -29,7 +29,7 @@ function createMainWindow(): BrowserWindow {
   });
 
   const htmlPath = path.join(__dirname, '..', '..', 'renderer', 'pet.html');
-  console.log('Loading pet.html from:', htmlPath);
+  try { console.log('Loading pet.html from:', htmlPath); } catch (_) {}
   mainWindow.loadFile(htmlPath);
 
   // Open DevTools in debug
@@ -42,14 +42,14 @@ function createMainWindow(): BrowserWindow {
   });
 
   mainWindow.webContents.on('did-finish-load', () => {
-    console.log('pet.html loaded successfully');
+  try { console.log('pet.html loaded successfully'); } catch (_) {}
   });
 
   mainWindow.webContents.on('console-message', (_event, level, message) => {
-    const prefix = ['LOG', 'WARN', 'ERROR'][level] || 'LOG';
-    console.log(`[Renderer ${prefix}] ${message}`);
-  });
-
+    try {
+      const prefix = ['LOG', 'WARN', 'ERROR'][level] || 'LOG';
+      console.log([Renderer ${prefix}] ${message});
+    } catch (_) { /* ignore broken pipe */ }
   return mainWindow;
 }
 
