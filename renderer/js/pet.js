@@ -179,7 +179,7 @@ document.addEventListener('mousemove', (e) => {
 
 
 // ---- Custom right-click menu ----
-var ctxMenu = document.getElementById("ctx-menu") || {};
+var ctxMenu = document.getElementById("ctx-menu");
 document.addEventListener("contextmenu", function(e) {
   e.preventDefault();
   if (ctxMenu.style) { ctxMenu.style.display = "block"; ctxMenu.style.left = e.clientX + "px"; ctxMenu.style.top = e.clientY + "px"; }
@@ -189,7 +189,7 @@ document.addEventListener("click", function() {
 });
 
 // Menu item clicks
-ctxMenu.addEventListener('click', function(e) {
+if (ctxMenu) ctxMenu.addEventListener('click', function(e) {
   var action = e.target.getAttribute('data-action');
   ctxMenu.style.display = 'none';
   if (action === 'home') { ipcRenderer.send('pet:enter-home'); }
