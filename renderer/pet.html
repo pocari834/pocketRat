@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -96,7 +96,6 @@
     /* Custom context menu */
     #ctx-menu {
       position: fixed;
-      position: absolute;
       display: none;
       background: white;
       border-radius: 8px;
@@ -126,17 +125,17 @@
   <canvas id="canvas" width="200" height="200"></canvas>
   <video id="dance-video" width="200" height="200" preload="auto" playsinline style="position:absolute;top:0;left:0;width:200px;height:200px;object-fit:contain;display:none;pointer-events:none;z-index:10;"></video>
   <div id="stats-panel">
-    <div class="stat-row"><span class="stat-icon">🍔</span><div class="stat-bar-bg"><div id="stat-hunger-fill" class="stat-bar-fill hunger" style="width:100%"></div></div><span id="stat-hunger-val" class="stat-val">100</span></div>
-    <div class="stat-row"><span class="stat-icon">😊</span><div class="stat-bar-bg"><div id="stat-mood-fill" class="stat-bar-fill mood" style="width:100%"></div></div><span id="stat-mood-val" class="stat-val">100</span></div>
-    <div class="stat-row"><span class="stat-icon">⚡</span><div class="stat-bar-bg"><div id="stat-energy-fill" class="stat-bar-fill energy" style="width:100%"></div></div><span id="stat-energy-val" class="stat-val">100</span></div>
+    <div class="stat-row"><span class="stat-icon">??</span><div class="stat-bar-bg"><div id="stat-hunger-fill" class="stat-bar-fill hunger" style="width:100%"></div></div><span id="stat-hunger-val" class="stat-val">100</span></div>
+    <div class="stat-row"><span class="stat-icon">??</span><div class="stat-bar-bg"><div id="stat-mood-fill" class="stat-bar-fill mood" style="width:100%"></div></div><span id="stat-mood-val" class="stat-val">100</span></div>
+    <div class="stat-row"><span class="stat-icon">?</span><div class="stat-bar-bg"><div id="stat-energy-fill" class="stat-bar-fill energy" style="width:100%"></div></div><span id="stat-energy-val" class="stat-val">100</span></div>
   </div>
   <div id="bubble"></div>
 <div id="ctx-menu">
-    <div class="ctx-item" data-action="home">🐹 鼠宝的家</div>
-    <div class="ctx-item" data-action="feed">🧀 喂食</div>
-    <div class="ctx-item" data-action="game">🎾 追光标</div>
+    <div class="ctx-item" data-action="home">?? �󱦵ļ�</div>
+    <div class="ctx-item" data-action="feed">?? ιʳ</div>
+    <div class="ctx-item" data-action="game">?? ׷���</div>
     <div class="ctx-sep"></div>
-    <div class="ctx-item" data-action="settings">⚙️ 设置</div>
+    <div class="ctx-item" data-action="settings">?? ����</div>
   </div>
   <script src="./js/renderer.js"></script>
   <script src="./js/state-machine.js"></script>

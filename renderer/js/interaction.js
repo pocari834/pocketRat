@@ -64,18 +64,18 @@ class InteractionManager {
       const { ipcRenderer } = require('electron');
       ipcRenderer.send('pet:get-position');
     } else if (this.isDragging && dist > this.petDetectionThreshold && duration > this.petTimeThreshold) {
-      // 抚摸：在宠物区域内拖动
+      // 抚摸：在宠物区域内拖�?
       if (this.isInsidePet) {
-        console.log('[Interaction] Pet gesture detected - petting');
+        // console.log(...);
         this.callbacks.onPet();
       }
     } else {
       // 点击：只有在宠物区域内才触发跳舞
       if (this.isInsidePet) {
-        console.log('[Interaction] Click detected inside pet - triggering dance');
+        // console.log(...);
         this.callbacks.onClick();
       } else {
-        console.log('[Interaction] Click detected outside pet - ignoring');
+        // console.log(...);
       }
     }
 
@@ -153,7 +153,7 @@ class FeedManager {
     this.feedElement.id = 'feed-panel';
     this.feedElement.innerHTML = `
       <div class="food-item" data-food="seed" draggable="true" title="种子">🌻</div>
-      <div class="food-item" data-food="carrot" draggable="true" title="胡萝卜">🥕</div>
+      <div class="food-item" data-food="carrot" draggable="true" title="胡萝�?>🥕</div>
       <div class="food-item" data-food="cheese" draggable="true" title="奶酪">🧀</div>
     `;
     this.feedElement.style.cssText = `

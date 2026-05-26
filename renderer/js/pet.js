@@ -1,4 +1,4 @@
-ï»¿/**
+/**
  * Pet Main Entry Point
  * Connects all systems: renderer, state machine, interaction, work mode, mini games
  */
@@ -11,7 +11,7 @@ const stateMachine = new PetStateMachine();
 // ---- Initialize pet stats ----
 const petStats = new PetStats();
 
-// Auto-save stats every 30 seconds
+// Auto-save stats every 15 seconds
 setInterval(() => { petStats.save(); }, 15000);
 const workModeManager = new WorkModeManager();
 const miniGameManager = new MiniGameManager();
@@ -22,7 +22,7 @@ const feedManager = new FeedManager({
     petStats.modifyMood(5);
     workModeManager.recordActivity();
     stateMachine.updateMouseActivity();
-    showBubble('å¥½åƒï¼ğŸ§€', 2000);
+    showBubble('ºÃ³Ô£¡??', 2000);
   },
 });
 
@@ -60,7 +60,7 @@ const interaction = new InteractionManager({
 // ---- Connect callbacks ----
 stateMachine.setCallbacks(
   (state, direction) => {
-    console.log('State: ' + state + ', direction: ' + direction);
+    // console.log('State: ' + state + ', direction: ' + direction);
     if (state === PetState.DANCE) {
       playDanceVideo();
     } else {
@@ -93,10 +93,10 @@ workModeManager.setCallbacks(
 );
 
 miniGameManager.setCallbacks((result) => {
-  console.log('Game ended: ' + result.gameType + ', score: ' + result.score + ', coins: ' + result.coins);
+  // console.log('Game ended: ' + result.gameType + ', score: ' + result.score + ', coins: ' + result.coins);
   petStats.modifyMood(25);
   petStats.modifyEnergy(-10);
-  showBubble('å¾—åˆ†: ' + result.score + 'ï¼é‡‘å¸ +' + result.coins + ' ğŸ‰', 3000);
+  showBubble('µÃ·Ö: ' + result.score + '£¡½ğ±Ò +' + result.coins + ' ??', 3000);
 });
 
 // ---- Load config ----
@@ -110,7 +110,7 @@ async function loadConfig() {
       if (config.drinkIntervalMinutes) workModeManager.updateConfig({ drinkIntervalMinutes: config.drinkIntervalMinutes });
     }
   } catch (e) {
-    console.log('Config load skipped (main process not ready)');
+    // console.log('Config load skipped (main process not ready)');
   }
 }
 
@@ -128,9 +128,7 @@ ipcRenderer.on('pet:position', (_event, pos) => {
 
 // ---- Main game loop ----
 let lastTime = performance.now();
-
 let currentFps = 30;
-
 
 function gameLoop(timestamp) {
   const delta = timestamp - lastTime;
@@ -176,8 +174,6 @@ document.addEventListener('mousemove', (e) => {
   if (isInside) { showStatsPanel(); } else { hideStatsPanelDelayed(); }
 });
 
-
-
 // ---- Custom right-click menu ----
 var ctxMenu = document.getElementById("ctx-menu");
 // Move menu to document level to escape overflow:hidden
@@ -186,21 +182,39 @@ if (ctxMenu && ctxMenu.parentNode !== document.documentElement) {
 }
 document.addEventListener("contextmenu", function(e) {
   e.preventDefault();
-  if (ctxMenu && ctxMenu.style) { ctxMenu.style.display = "block"; ctxMenu.style.left = e.clientX + "px"; ctxMenu.style.top = e.clientY + "px"; }
+  if (ctxMenu) { ctxMenu.style.display = "block"; ctxMenu.style.left = e.clientX + "px"; ctxMenu.style.top = e.clientY + "px"; }
 });
-document.addEventListener("click", function() {
-  if (ctxMenu.style) ctxMenu.style.display = "none";
+document.addEventListener("click", function(e) {
+  // Hide menu when clicking elsewhere
+  if (!e.target.closest("#ctx-menu")) {
+    ctxMenu.style.display = "none";
+  }
 });
 
-// Menu item clicks
-if (ctxMenu) ctxMenu.addEventListener('click', function(e) {
-  var item = e.target.closest('.ctx-item'); if (!item) return; var action = item.getAttribute('data-action');
-  ctxMenu.style.display = 'none';
-  if (action === 'home') { ipcRenderer.send('pet:enter-home'); }
-  else if (action === 'feed') { ipcRenderer.send('pet:feed'); }
-  else if (action === 'game') { ipcRenderer.send('game:start', 'chase_cursor'); }
-  else if (action === 'settings') { ipcRenderer.send('settings:open'); }
-});
+// Menu item clicks - call functions directly or use IPC
+if (ctxMenu) {
+  ctxMenu.addEventListener("click", function(e) {
+    var item = e.target.closest(".ctx-item");
+    if (!item) return;
+    var action = item.getAttribute("data-action");
+    ctxMenu.style.display = "none";
+    if (action === "home") {
+      ipcRenderer.send("pet:enter-home");
+    } else if (action === "feed") {
+      stateMachine.handleInteraction(InteractionType.FEED);
+      petStats.modifyHunger(30);
+      petStats.modifyMood(5);
+      showBubble("ºÃ³Ô£¡??", 2000);
+    } else if (action === "game") {
+      petStats.modifyMood(15);
+      petStats.modifyEnergy(-5);
+      miniGameManager.startGame("chase_cursor");
+    } else if (action === "settings") {
+      ipcRenderer.send("settings:open");
+    }
+  });
+}
+
 ipcRenderer.on('settings:updated', (_event, config) => {
   if (config.currentRatColor) setRatColor(config.currentRatColor);
   if (config.alwaysOnTop !== undefined) {
@@ -232,12 +246,12 @@ ipcRenderer.on('pet:feed', () => {
   petStats.modifyHunger(30);
   petStats.modifyMood(5);
   const isOpen = feedManager.toggleFeedMode();
-  showBubble(isOpen ? 'æ‹–ä¸€ä¸ªé›¶é£Ÿç»™æˆ‘å§~' : 'ä¸‹æ¬¡å†åƒ~', 2000);
+  showBubble(isOpen ? 'ÍÏÒ»¸öÁãÊ³¸øÎÒ°É~' : 'ÏÂ´ÎÔÙ³Ô~', 2000);
 });
 
 ipcRenderer.on('pet:play', () => {
   stateMachine.handleInteraction(InteractionType.CLICK);
-  showBubble('å±å±ï¼ç©ï¼ğŸ¾', 2000);
+  showBubble('Ö¨Ö¨£¡Íæ£¡??', 2000);
 });
 
 // ---- Dismiss work mode reminders ----
@@ -250,5 +264,5 @@ function dismissReminderIfNeeded() {
 loadConfig().then(() => {
   workModeManager.startMonitoring();
   requestAnimationFrame(gameLoop);
-  showBubble('å±å±ï¼æˆ‘æ¥äº†~ ğŸ¹', 3000);
+  showBubble('Ö¨Ö¨£¡ÎÒÀ´ÁË~ ??', 3000);
 });

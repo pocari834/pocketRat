@@ -1,45 +1,53 @@
 {
-  "name": "pocket-rat",
-  "version": "1.0.0",
-  "description": "Pocket Rat - Steam Desktop Companion",
-  "main": "dist/main/main.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "npm run build && electron .",
-    "dev": "tsc && electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder",
-    "test-animation": "start .\\renderer\\animation-test.html",
-    "split-sprite": "node tools/sprite-splitter.js",
-    "animation-setup": "node tools/animation-setup.js"
-  },
-  "author": "Pocket Rat Team",
-  "license": "MIT",
-  "devDependencies": {
-    "electron": "^33.0.0",
-    "electron-builder": "^25.0.0",
-    "typescript": "^5.6.0"
-  },
-  "dependencies": {
-    "electron-store": "^8.1.0"
-  },
-  "build": {
-    "appId": "com.pocketrat.desktop",
-    "productName": "Pocket Rat",
-    "directories": {
-      "output": "release"
-    },
-    "files": [
-      "dist/**/*",
-      "renderer/**/*"
-    ],
-    "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
-    },
-    "mac": {
-      "target": "dmg",
-      "icon": "assets/icon.icns"
-    }
-  }
+    "name":  "pocket-rat",
+    "version":  "1.0.0",
+    "description":  "Pocket Rat - Steam Desktop Companion",
+    "main":  "dist/main/main.js",
+    "scripts":  {
+                    "build":  "tsc",
+                    "start":  "npm run build \u0026\u0026 electron .",
+                    "dev":  "tsc \u0026\u0026 electron .",
+                    "pack":  "electron-builder --dir",
+                    "dist":  "electron-builder",
+                    "test-animation":  "start .\\renderer\\animation-test.html",
+                    "split-sprite":  "node tools/sprite-splitter.js",
+                    "animation-setup":  "node tools/animation-setup.js",
+                    "test":  "jest"
+                },
+    "author":  "Pocket Rat Team",
+    "license":  "MIT",
+    "devDependencies":  {
+                            "electron":  "^33.0.0",
+                            "electron-builder":  "^25.0.0",
+                            "jest":  "^30.4.2",
+                            "typescript":  "^5.6.0"
+                        },
+    "dependencies":  {
+                         "electron-store":  "^8.1.0"
+                     },
+    "build":  {
+                  "appId":  "com.pocketrat.desktop",
+                  "productName":  "Pocket Rat",
+                  "directories":  {
+                                      "output":  "release"
+                                  },
+                  "files":  [
+                                "dist/**/*",
+                                "renderer/**/*"
+                            ],
+                  "win":  {
+                              "target":  "nsis",
+                              "icon":  "assets/icon.ico"
+                          },
+                  "mac":  {
+                              "target":  "dmg",
+                              "icon":  "assets/icon.icns"
+                          }
+              },
+    "jest":  {
+                 "testMatch":  [
+                                   "**/__tests__/**/*.test.js"
+                               ],
+                 "testEnvironment":  "node"
+             }
 }

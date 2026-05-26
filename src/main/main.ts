@@ -1,4 +1,4 @@
-﻿import { app, BrowserWindow, Tray, Menu, ipcMain, screen, nativeImage } from 'electron';
+import { app, BrowserWindow, Tray, Menu, ipcMain, screen, nativeImage } from 'electron';
 import * as path from 'path';
 import { AppStore } from './store';
 
@@ -16,8 +16,7 @@ function createMainWindow(): BrowserWindow {
     height: 200,
     x: screenWidth - 250,
     y: screenHeight - 250,
-    transparent: false,
-    backgroundColor: '#FFE0E0',
+    transparent: true,
     frame: false,
     resizable: false,
     alwaysOnTop: true,
@@ -96,10 +95,10 @@ function createHomeWindow(): void {
     y: 100,
     frame: false,
     resizable: false,
-    transparent: false,
+    transparent: true,
     alwaysOnTop: true,
     backgroundColor: '#EFEBE9',
-    title: '鼠宝的家',
+    title: '�󱦵ļ�',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -118,14 +117,14 @@ function createTray(): void {
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAMlJREFUSEvt1LEJAjEUBdD/ySWcwBmcwSFcwidcwiV0BSd0BSf0BSI0EakiE2TiV96srflY5tP9+jN7OttYlvUby7J8j2VZVm+ez6cPMvY1H4g7I2Z8A14wD2d3wAVwBB7jE3CO24+5bgPv+AFcRbrgGryAO9EBV+Ay7kQH3AIv4Ba8wCVwg3vQBVfBE3COOnCNuNAFV8E9rkUP3AUP4hZ8iFvwKT6IW/AhbsO7+AsX+Qn5g1mW9R8m+w8k6zYVR8q1MgAAAABJRU5ErkJggg=='
   );
   tray = new Tray(icon);
-  tray.setToolTip('Pocket Rat 🐹');
+  tray.setToolTip('Pocket Rat ??');
 
   const contextMenu = Menu.buildFromTemplate([
-    { label: '🐹 显示鼠宝', click: () => mainWindow?.show() },
-    { label: '🏠 鼠宝的家', click: () => createHomeWindow() },
-    { label: '⚙️ 设置', click: () => createSettingsWindow() },
+    { label: '?? ��ʾ��', click: () => mainWindow?.show() },
+    { label: '?? �󱦵ļ�', click: () => createHomeWindow() },
+    { label: '?? ����', click: () => createSettingsWindow() },
     { type: 'separator' },
-    { label: '❌ 退出', click: () => app.quit() },
+    { label: '? �˳�', click: () => app.quit() },
   ]);
 
   tray.setContextMenu(contextMenu);
