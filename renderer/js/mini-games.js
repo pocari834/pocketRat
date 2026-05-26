@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Mini Games System
  * Games: CHASE_CURSOR, SNACK_RAIN, TUNNEL_RACE, CATCH_ME
  */
@@ -26,6 +26,8 @@ class ChaseCursorGame {
     this.CATCH_THRESHOLD = 20;
     this.onEnd = null;
     this.startTime = 0;
+    this.roundTimeLimit = 8000;
+    this.roundStartTime = 0;
   }
 
   start() {
@@ -33,6 +35,7 @@ class ChaseCursorGame {
     this.score = 0;
     this.catchCount = 0;
     this.startTime = Date.now();
+    this.roundStartTime = Date.now();
     this._onMouseMove = (e) => {
       const point = this.getCanvasPoint(e);
       this.targetX = point.x;
@@ -64,8 +67,10 @@ class ChaseCursorGame {
       this.score++;
       this.targetX = 50 + Math.random() * (this.canvas.width - 100);
       this.targetY = 50 + Math.random() * (this.canvas.height - 100);
+      this.roundStartTime = Date.now();
     }
-    if (Date.now() - this.startTime > this.maxDuration) this.end();
+    if (Date.now() - this.startTime > this.maxDuration) { this.end(); return; }
+    if (Date.now() - this.roundStartTime > this.roundTimeLimit) { this.end(); return; }
   }
 
   render() {
