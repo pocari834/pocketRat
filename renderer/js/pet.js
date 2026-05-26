@@ -50,7 +50,7 @@ const interaction = new InteractionManager({
     stateMachine.handleInteraction(InteractionType.SCARE);
   },
   onRightClick: () => {
-    ipcRenderer.send('pet:right-click');
+      // right-click handled by custom menu
   },
   onDragStart: () => {
     stateMachine.transitionTo(PetState.IDLE);
@@ -179,15 +179,13 @@ document.addEventListener('mousemove', (e) => {
 
 
 // ---- Custom right-click menu ----
-var ctxMenu = document.getElementById("ctx-menu");
+var ctxMenu = document.getElementById("ctx-menu") || {};
 document.addEventListener("contextmenu", function(e) {
   e.preventDefault();
-  ctxMenu.style.display = "block";
-  ctxMenu.style.left = e.clientX + "px";
-  ctxMenu.style.top = e.clientY + "px";
+  if (ctxMenu.style) { ctxMenu.style.display = "block"; ctxMenu.style.left = e.clientX + "px"; ctxMenu.style.top = e.clientY + "px"; }
 });
 document.addEventListener("click", function() {
-  ctxMenu.style.display = "none";
+  if (ctxMenu.style) ctxMenu.style.display = "none";
 });
 
 // Menu item clicks
